@@ -1,0 +1,74 @@
+Docker compose y archivos YML
+1. configuracion yml para docker-compose este archivo debe disponer de sus cuatro elementos:
+
+1.1. version: se indica la version de acuerdo al soporte de docker.
+1.2. service: se indican los nombres del servicio que se estan configurando.
+1.3. volumen: se configura el volumen para la persistencia de datos de los contenedores.
+1.4. networks: se define las redes de cada contenedor.
+
+2. Este comando se ejecuta dentro de la carpeta que se tenga un archivo de yml. este archivo debe estar dentro de una carpeta.
+ docker-compose up -d
+3. la estructura de estos archivos estan indentados debajo de una identificacion, ya que estos idican que son una parte de los vectores y estos llevan indentacion y adicinalmente
+estos llevan guiones.
+
+#Esto es un comentario en YAML
+
+#Valores asociativos
+identificacion:
+  nombres: Daniel
+	apellido: Calle
+
+#una lista
+mascotas:
+  - gato
+  - perro
+4. realizar la configuraciones de un postgres:
+
+version: "3.8"
+services:
+  dbpostgres:
+    container_name: postgres
+    image: postgres:12.1
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORRD=postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - red
+    ports:
+      - "5433:5432"
+volumes:
+  db-data:
+	  driver: local
+networks:
+  red:
+    driver: bridge
+
+5. la seccion de network no se puede configurar por lo cual luego de que se ejecute el archivo se agregan los contenedores de la red:
+version: "3.8"
+services:
+#configuracion para postgres
+  dbpostgres:
+    container_name: postgres
+    image: postgres:12.1
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORRD=postgres
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  #configuracion para pgadmin
+  pgamin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@domain.com
+      - PGADMIN_DEFAULT_PASSWORD=superSecret
+    ports:
+      - "8090:80"
+volumes:
+  dbdata:
+    driver: local
